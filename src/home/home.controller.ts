@@ -1,10 +1,13 @@
 import { Controller, Get, Render } from '@nestjs/common';
+import { HomeService } from './home.service';
 
 @Controller('home')
 export class HomeController {
+  constructor(private readonly homeService: HomeService) {}
+
   @Get()
   @Render('home')
-  get() {
-    return { message: 'This is a message' };
+  getHome() {
+    return { message: this.homeService.getHello() };
   }
 }
