@@ -4,7 +4,7 @@ import { Controller, Get, Render } from '@nestjs/common';
 export class HomeController {
   @Get()
   @Render('home')
-  home() {
+  get() {
     return { message: 'This is a message' };
   }
 }
