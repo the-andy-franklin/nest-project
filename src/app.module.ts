@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HomeModule } from './home/home.module';
 import { PizzaModule } from './pizza/pizza.module';
+import { TodoModule } from './todo/todo.module';
 
 @Module({
-  imports: [HomeModule, PizzaModule],
+  imports: [HomeModule, PizzaModule, TodoModule],
   controllers: [AppController],
   providers: [AppService],
 })
