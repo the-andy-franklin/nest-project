@@ -6,36 +6,32 @@ import { PrismaService } from '../prisma.service';
 export class TodoService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllTodos(): Promise<Todo[]> {
-    return await this.prisma.todo.findMany();
+  getAllTodos(): Promise<Todo[]> {
+    return this.prisma.todo.findMany();
   }
 
-  async getTodoById(id: number): Promise<Todo> {
-    return await this.prisma.todo.findUnique({
+  getTodoById(id: number): Promise<Todo | null> {
+    return this.prisma.todo.findUnique({
       where: { id },
     });
   }
 
-  async createTodo(todo: Todo): Promise<Todo> {
-    return await this.prisma.todo.create({
+  createTodo(todo: Todo): Promise<Todo> {
+    return this.prisma.todo.create({
       data: todo,
     });
   }
 
-  async updateTodoById(id: number, updatedTodo: Todo): Promise<Todo> {
-    return await this.prisma.todo.update({
+  updateTodoById(id: number, updatedTodo: Todo): Promise<Todo> {
+    return this.prisma.todo.update({
       where: { id },
       data: updatedTodo,
     });
   }
 
-  async deleteTodoById(id: number): Promise<Todo> {
-    return await this.prisma.todo.delete({
+  deleteTodoById(id: number): Promise<Todo> {
+    return this.prisma.todo.delete({
       where: { id },
     });
-  }
-
-  async onModuleDestroy() {
-    await this.prisma.$disconnect();
   }
 }

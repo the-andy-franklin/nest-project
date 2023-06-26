@@ -7,7 +7,7 @@ import {
   Param,
   Body,
 } from '@nestjs/common';
-import { Todo } from './todo.model';
+import { Todo, todoSchema } from './todo.model';
 import { z } from 'zod';
 import { TodoService } from './todo.service';
 
@@ -16,32 +16,39 @@ export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Get()
-  async getAllTodos(): Promise<Todo[]> {
-    return await this.todoService.getAllTodos();
+  getAllTodos(): Promise<Todo[]> {
+    return this.todoService.getAllTodos();
   }
 
   @Get(':id')
-  async getTodoById(@Param('id') id: number): Promise<Todo> {
-    return await this.todoService.getTodoById(id);
+  getTodoById(@Param('id') id: string | number): Promise<Todo | null> {
+    const numId = z.coerce.number().parse(id);
+
+    return this.todoService.getTodoById(numId);
   }
 
   @Post()
-  async createTodo(@Body() todo: Todo): Promise<Todo> {
-    return await this.todoService.createTodo(todo);
+  createTodo(@Body() todo: Todo): Promise<Todo> {
+    todo = todoSchema.parse(todo);
+
+    return this.todoService.createTodo(todo);
   }
 
   @Put(':id')
-  async updateTodoById(
-    @Param('id') id: number,
+  updateTodoById(
+    @Param('id') id: string | number,
     @Body() updatedTodo: Todo,
   ): Promise<Todo> {
-    return await this.todoService.updateTodoById(id, updatedTodo);
+    id = z.coerce.number().parse(id);
+    updatedTodo = todoSchema.parse(updatedTodo);
+
+    return this.todoService.updateTodoById(id, updatedTodo);
   }
 
   @Delete(':id')
-  deleteTodoById(@Param('id') id: number): void {
-    id = z.coerce.number().nonnegative().parse(id);
+  deleteTodoById(@Param('id') id: string | number): Promise<Todo> {
+    id = z.coerce.number().parse(id);
 
-    this.todoService.deleteTodoById(id);
+    return this.todoService.deleteTodoById(id);
   }
 }
