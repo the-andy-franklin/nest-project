@@ -22,7 +22,7 @@ describe('HomeController', () => {
     expect(controller.getHome).toBeDefined();
   });
 
-  it('should return a html document', () => {
+  it('should return "Hello Home!"', () => {
     expect(controller.getHome()).toStrictEqual({ message: 'Hello Home!' });
   });
 });
