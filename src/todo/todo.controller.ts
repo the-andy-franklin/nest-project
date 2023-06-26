@@ -8,34 +8,40 @@ import {
   Body,
 } from '@nestjs/common';
 import { Todo } from './todo.model';
-import { TodoService } from './todo.service';
+import { PrismaService } from './prisma.service';
+import { z } from 'zod';
 
 @Controller('todos')
 export class TodoController {
-  constructor(private readonly todoService: TodoService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   @Get()
-  getAllTodos(): Todo[] {
-    return this.todoService.getAllTodos();
+  async getAllTodos(): Promise<Todo[]> {
+    return await this.prismaService.getAllTodos();
   }
 
   @Get(':id')
-  getTodoById(@Param('id') id: number): Todo {
-    return this.todoService.getTodoById(id);
+  async getTodoById(@Param('id') id: number): Promise<Todo> {
+    return await this.prismaService.getTodoById(id);
   }
 
   @Post()
-  createTodo(@Body() todo: Todo): Todo {
-    return this.todoService.createTodo(todo);
+  async createTodo(@Body() todo: Todo): Promise<Todo> {
+    return await this.prismaService.createTodo(todo);
   }
 
   @Put(':id')
-  updateTodoById(@Param('id') id: number, @Body() updatedTodo: Todo): Todo {
-    return this.todoService.updateTodoById(id, updatedTodo);
+  async updateTodoById(
+    @Param('id') id: number,
+    @Body() updatedTodo: Todo,
+  ): Promise<Todo> {
+    return await this.prismaService.updateTodoById(id, updatedTodo);
   }
 
   @Delete(':id')
   deleteTodoById(@Param('id') id: number): void {
-    this.todoService.deleteTodoById(id);
+    id = z.coerce.number().nonnegative().parse(id);
+
+    this.prismaService.deleteTodoById(id);
   }
 }
