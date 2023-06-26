@@ -1,43 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { Todo } from './todo.model';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class TodoService {
-  private todos: Todo[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-  getAllTodos(): Todo[] {
-    return this.todos;
+  async getAllTodos(): Promise<Todo[]> {
+    return await this.prisma.todo.findMany();
   }
 
-  getTodoById(id: number): Todo {
-    return this.todos.find((todo) => todo.id === id);
+  async getTodoById(id: number): Promise<Todo> {
+    return await this.prisma.todo.findUnique({
+      where: { id },
+    });
   }
 
-  createTodo(todo: Todo): Todo {
-    todo.id = this.generateUniqueId();
-    this.todos.push(todo);
-    return todo;
+  async createTodo(todo: Todo): Promise<Todo> {
+    return await this.prisma.todo.create({
+      data: todo,
+    });
   }
 
-  updateTodoById(id: number, updatedTodo: Todo): Todo {
-    const todoIndex = this.todos.findIndex((todo) => todo.id === id);
-    if (todoIndex !== -1) {
-      this.todos[todoIndex] = { ...this.todos[todoIndex], ...updatedTodo };
-      return this.todos[todoIndex];
-    }
-    return null;
+  async updateTodoById(id: number, updatedTodo: Todo): Promise<Todo> {
+    return await this.prisma.todo.update({
+      where: { id },
+      data: updatedTodo,
+    });
   }
 
-  deleteTodoById(id: number): void {
-    const todoIndex = this.todos.findIndex((todo) => todo.id === id);
-    if (todoIndex !== -1) {
-      this.todos.splice(todoIndex, 1);
-    }
+  async deleteTodoById(id: number): Promise<Todo> {
+    return await this.prisma.todo.delete({
+      where: { id },
+    });
   }
 
-  private generateUniqueId(): number {
-    const ids = this.todos.map((todo) => todo.id);
-    const maxId = Math.max(...ids);
-    return maxId >= 0 ? maxId + 1 : 0;
+  async onModuleDestroy() {
+    await this.prisma.$disconnect();
   }
 }
