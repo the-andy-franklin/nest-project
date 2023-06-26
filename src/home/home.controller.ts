@@ -8,6 +8,6 @@ export class HomeController {
   @Get()
   @Render('home')
   getHome() {
-    return { message: this.homeService.getHello() };
+    return { message: this.homeService.getMessage() };
   }
 }

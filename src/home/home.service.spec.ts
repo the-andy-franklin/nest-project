@@ -15,4 +15,12 @@ describe('HomeService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should have a method called getMessage', () => {
+    expect(service.getMessage).toBeDefined();
+  });
+
+  it('should return "Hello Home!"', () => {
+    expect(service.getMessage()).toBe('Hello Home!');
+  });
 });
